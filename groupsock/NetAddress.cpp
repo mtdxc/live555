@@ -487,12 +487,12 @@ AddressString::AddressString(struct sockaddr_storage const& addr) {
 
 void AddressString::init(ipv4AddressBits const& addr) {
   fVal = new char[INET_ADDRSTRLEN];
-  inet_ntop(AF_INET, &addr, fVal, INET_ADDRSTRLEN);
+	inet_ntop(AF_INET, (void*)&addr, fVal, INET_ADDRSTRLEN);
 }
 
 void AddressString::init(ipv6AddressBits const& addr) {
   fVal = new char[INET6_ADDRSTRLEN];
-  inet_ntop(AF_INET6, &addr, fVal, INET6_ADDRSTRLEN);
+  inet_ntop(AF_INET6, (void*)&addr, fVal, INET6_ADDRSTRLEN);
 }
 
 AddressString::~AddressString() {
