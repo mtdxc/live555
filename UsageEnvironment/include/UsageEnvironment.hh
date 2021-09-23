@@ -53,7 +53,7 @@ class TaskScheduler; // forward
 class UsageEnvironment {
 public:
   Boolean reclaim();
-      // returns True iff we were actually able to delete our object
+      // returns True if we were actually able to delete our object
 
   // task scheduler:
   TaskScheduler& taskScheduler() const {return fScheduler;}
@@ -68,7 +68,7 @@ public:
   virtual void setResultErrMsg(MsgString msg, int err = 0) = 0;
 	// like setResultMsg(), except that an 'errno' message is appended.  (If "err == 0", the "getErrno()" code is used instead.)
 
-  virtual void appendToResultMsg(MsgString msg) = 0;
+  virtual void appendToResultMsg(MsgString msg) = 0; 
 
   virtual void reportBackgroundError() = 0;
 	// used to report a (previously set) error message within

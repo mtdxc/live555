@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 
 project(live555)
-
+find_package(OpenSSL REQUIRED)
 include_directories(${CMAKE_SOURCE_DIR}/BasicUsageEnvironment/include)
 include_directories(${CMAKE_SOURCE_DIR}/groupsock/include)
 include_directories(${CMAKE_SOURCE_DIR}/liveMedia/include)
@@ -11,7 +11,6 @@ if(MSVC)
 add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 add_definitions(-D_WINSOCK_DEPRECATED_NO_WARNINGS)
 add_definitions(-DNO_GETIFADDRS)
-add_definitions(-DNO_OPENSSL)
 endif()
 
 file(GLOB BasicUsageEnvironmentFiles
@@ -26,6 +25,7 @@ add_library(groupsock ${groupsockfiles})
 file(GLOB liveMediaFiles
 		liveMedia/*.hh liveMedia/*.cpp liveMedia/*.c)	
 add_library(liveMedia ${liveMediaFiles})
+target_link_libraries(liveMedia OpenSSL::SSL)
 
 file(GLOB UsageEnvironmentFiles 
     UsageEnvironment/*.cpp)
