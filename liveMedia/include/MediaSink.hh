@@ -31,9 +31,7 @@ public:
 			      MediaSink*& resultSink);
 
   typedef void (afterPlayingFunc)(void* clientData);
-  Boolean startPlaying(MediaSource& source,
-		       afterPlayingFunc* afterFunc,
-		       void* afterClientData);
+  Boolean startPlaying(MediaSource& source, afterPlayingFunc* afterFunc, void* afterClientData);
   virtual void stopPlaying();
 
   // Test for specific types of sink:
@@ -46,14 +44,14 @@ protected:
   virtual ~MediaSink();
 
   virtual Boolean sourceIsCompatibleWithUs(MediaSource& source);
-      // called by startPlaying()
+  // called by startPlaying()
   virtual Boolean continuePlaying() = 0;
-      // called by startPlaying()
+  // called by startPlaying()
 
   static void onSourceClosure(void* clientData); // can be used in "getNextFrame()" calls
   void onSourceClosure();
-      // should be called (on ourselves) by continuePlaying() when it
-      // discovers that the source we're playing from has closed.
+  // should be called (on ourselves) by continuePlaying() when it
+  // discovers that the source we're playing from has closed.
 
   FramedSource* fSource;
 

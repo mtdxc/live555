@@ -149,7 +149,7 @@ private:
 
   static void afterGettingFrame(void* clientData, unsigned frameSize,
                                 unsigned numTruncatedBytes,
-				struct timeval presentationTime,
+                                struct timeval presentationTime,
                                 unsigned durationInMicroseconds);
   void afterGettingFrame(unsigned frameSize, unsigned numTruncatedBytes,
 			 struct timeval presentationTime, unsigned durationInMicroseconds);
@@ -227,23 +227,23 @@ void continueAfterDESCRIBE(RTSPClient* rtspClient, int resultCode, char* resultS
 
 // By default, we request that the server stream its data using RTP/UDP.
 // If, instead, you want to request that the server stream via RTP-over-TCP, change the following to True:
-#define REQUEST_STREAMING_OVER_TCP False
+#define REQUEST_STREAMING_OVER_TCP True
 
 void setupNextSubsession(RTSPClient* rtspClient) {
   UsageEnvironment& env = rtspClient->envir(); // alias
   StreamClientState& scs = ((ourRTSPClient*)rtspClient)->scs; // alias
   
   scs.subsession = scs.iter->next();
-  if (scs.subsession != NULL) {
+  if (scs.subsession) {
     if (!scs.subsession->initiate()) {
       env << *rtspClient << "Failed to initiate the \"" << *scs.subsession << "\" subsession: " << env.getResultMsg() << "\n";
       setupNextSubsession(rtspClient); // give up on this subsession; go to the next one
     } else {
       env << *rtspClient << "Initiated the \"" << *scs.subsession << "\" subsession (";
       if (scs.subsession->rtcpIsMuxed()) {
-	env << "client port " << scs.subsession->clientPortNum();
+        env << "client port " << scs.subsession->clientPortNum();
       } else {
-	env << "client ports " << scs.subsession->clientPortNum() << "-" << scs.subsession->clientPortNum()+1;
+        env << "client ports " << scs.subsession->clientPortNum() << "-" << scs.subsession->clientPortNum()+1;
       }
       env << ")\n";
 
@@ -254,7 +254,7 @@ void setupNextSubsession(RTSPClient* rtspClient) {
   }
 
   // We've finished setting up all of the subsessions.  Now, send a RTSP "PLAY" command to start the streaming:
-  if (scs.session->absStartTime() != NULL) {
+  if (scs.session->absStartTime()) {
     // Special case: The stream is indexed by 'absolute' time, so send an appropriate "PLAY" command:
     rtspClient->sendPlayCommand(*scs.session, continueAfterPLAY, scs.session->absStartTime(), scs.session->absEndTime());
   } else {
@@ -289,16 +289,16 @@ void continueAfterSETUP(RTSPClient* rtspClient, int resultCode, char* resultStri
       // perhaps use your own custom "MediaSink" subclass instead
     if (scs.subsession->sink == NULL) {
       env << *rtspClient << "Failed to create a data sink for the \"" << *scs.subsession
-	  << "\" subsession: " << env.getResultMsg() << "\n";
+          << "\" subsession: " << env.getResultMsg() << "\n";
       break;
     }
 
     env << *rtspClient << "Created a data sink for the \"" << *scs.subsession << "\" subsession\n";
-    scs.subsession->miscPtr = rtspClient; // a hack to let subsession handler functions get the "RTSPClient" from the subsession 
-    scs.subsession->sink->startPlaying(*(scs.subsession->readSource()),
-				       subsessionAfterPlaying, scs.subsession);
+    // a hack to let subsession handler functions get the "RTSPClient" from the subsession 
+    scs.subsession->miscPtr = rtspClient; 
+    scs.subsession->sink->startPlaying(*(scs.subsession->readSource()), subsessionAfterPlaying, scs.subsession);
     // Also set a handler to be called if a RTCP "BYE" arrives for this subsession:
-    if (scs.subsession->rtcpInstance() != NULL) {
+    if (scs.subsession->rtcpInstance()) {
       scs.subsession->rtcpInstance()->setByeWithReasonHandler(subsessionByeHandler, scs.subsession);
     }
   } while (0);
@@ -320,6 +320,7 @@ void continueAfterPLAY(RTSPClient* rtspClient, int resultCode, char* resultStrin
       break;
     }
 
+    env << *rtspClient << "Started playing session";
     // Set a timer to be handled at the end of the stream's expected duration (if the stream does not already signal its end
     // using a RTCP "BYE").  This is optional.  If, instead, you want to keep the stream active - e.g., so you can later
     // 'seek' back within it and do another RTSP "PLAY" - then you can omit this code.
@@ -329,10 +330,7 @@ void continueAfterPLAY(RTSPClient* rtspClient, int resultCode, char* resultStrin
       scs.duration += delaySlop;
       unsigned uSecsToDelay = (unsigned)(scs.duration*1000000);
       scs.streamTimerTask = env.taskScheduler().scheduleDelayedTask(uSecsToDelay, (TaskFunc*)streamTimerHandler, rtspClient);
-    }
 
-    env << *rtspClient << "Started playing session";
-    if (scs.duration > 0) {
       env << " (for up to " << scs.duration << " seconds)";
     }
     env << "...\n";
@@ -361,8 +359,8 @@ void subsessionAfterPlaying(void* clientData) {
   // Next, check whether *all* subsessions' streams have now been closed:
   MediaSession& session = subsession->parentSession();
   MediaSubsessionIterator iter(session);
-  while ((subsession = iter.next()) != NULL) {
-    if (subsession->sink != NULL) return; // this subsession is still active
+  while ((subsession = iter.next())) {
+    if (subsession->sink) return; // this subsession is still active
   }
 
   // All subsessions' streams have now been closed, so shutdown the client:
@@ -375,7 +373,7 @@ void subsessionByeHandler(void* clientData, char const* reason) {
   UsageEnvironment& env = rtspClient->envir(); // alias
 
   env << *rtspClient << "Received RTCP \"BYE\"";
-  if (reason != NULL) {
+  if (reason) {
     env << " (reason:\"" << reason << "\")";
     delete[] (char*)reason;
   }
@@ -399,22 +397,22 @@ void shutdownStream(RTSPClient* rtspClient, int exitCode) {
   UsageEnvironment& env = rtspClient->envir(); // alias
   StreamClientState& scs = ((ourRTSPClient*)rtspClient)->scs; // alias
 
-  // First, check whether any subsessions have still to be closed:
-  if (scs.session != NULL) { 
+  // First, check whether any subsession have still to be closed:
+  if (scs.session) { 
     Boolean someSubsessionsWereActive = False;
     MediaSubsessionIterator iter(*scs.session);
     MediaSubsession* subsession;
 
-    while ((subsession = iter.next()) != NULL) {
-      if (subsession->sink != NULL) {
-	Medium::close(subsession->sink);
-	subsession->sink = NULL;
+    while (subsession = iter.next()) {
+      if (subsession->sink) {
+        Medium::close(subsession->sink);
+        subsession->sink = NULL;
 
-	if (subsession->rtcpInstance() != NULL) {
-	  subsession->rtcpInstance()->setByeHandler(NULL, NULL); // in case the server sends a RTCP "BYE" while handling "TEARDOWN"
-	}
+        if (subsession->rtcpInstance()) {
+          subsession->rtcpInstance()->setByeHandler(NULL, NULL); // in case the server sends a RTCP "BYE" while handling "TEARDOWN"
+        }
 
-	someSubsessionsWereActive = True;
+        someSubsessionsWereActive = True;
       }
     }
 
@@ -462,11 +460,11 @@ StreamClientState::StreamClientState()
 
 StreamClientState::~StreamClientState() {
   delete iter;
-  if (session != NULL) {
+  if (session) {
     // We also need to delete "session", and unschedule "streamTimerTask" (if set)
     UsageEnvironment& env = session->envir(); // alias
-
     env.taskScheduler().unscheduleDelayedTask(streamTimerTask);
+
     Medium::close(session);
   }
 }
@@ -507,13 +505,13 @@ void DummySink::afterGettingFrame(unsigned frameSize, unsigned numTruncatedBytes
 				  struct timeval presentationTime, unsigned /*durationInMicroseconds*/) {
   // We've just received a frame of data.  (Optionally) print out information about it:
 #ifdef DEBUG_PRINT_EACH_RECEIVED_FRAME
-  if (fStreamId != NULL) envir() << "Stream \"" << fStreamId << "\"; ";
-  envir() << fSubsession.mediumName() << "/" << fSubsession.codecName() << ":\tReceived " << frameSize << " bytes";
+  if (fStreamId) envir() << "Stream \"" << fStreamId << "\"; ";
+  envir() << fSubsession << ":\tReceived " << frameSize << " bytes";
   if (numTruncatedBytes > 0) envir() << " (with " << numTruncatedBytes << " bytes truncated)";
   char uSecsStr[6+1]; // used to output the 'microseconds' part of the presentation time
   sprintf(uSecsStr, "%06u", (unsigned)presentationTime.tv_usec);
   envir() << ".\tPresentation time: " << (int)presentationTime.tv_sec << "." << uSecsStr;
-  if (fSubsession.rtpSource() != NULL && !fSubsession.rtpSource()->hasBeenSynchronizedUsingRTCP()) {
+  if (fSubsession.rtpSource() && !fSubsession.rtpSource()->hasBeenSynchronizedUsingRTCP()) {
     envir() << "!"; // mark the debugging output to indicate that this presentation time is not RTCP-synchronized
   }
 #ifdef DEBUG_PRINT_NPT

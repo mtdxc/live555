@@ -531,29 +531,30 @@ Boolean SocketDescriptor::tcpReadHandler1(int mask) {
     case AWAITING_DOLLAR: {
       if (c == '$') {
 #ifdef DEBUG_RECEIVE
-	fprintf(stderr, "SocketDescriptor(socket %d)::tcpReadHandler(): Saw '$'\n", fOurSocketNum);
+        fprintf(stderr, "SocketDescriptor(socket %d)::tcpReadHandler(): Saw '$'\n", fOurSocketNum);
 #endif
-	fTCPReadingState = AWAITING_STREAM_CHANNEL_ID;
+        fTCPReadingState = AWAITING_STREAM_CHANNEL_ID;
       } else {
-	// This character is part of a RTSP request or command, which is handled separately:
-	if (fServerRequestAlternativeByteHandler != NULL && c != 0xFF && c != 0xFE) {
-	  // Hack: 0xFF and 0xFE are used as special signaling characters, so don't send them
-	  (*fServerRequestAlternativeByteHandler)(fServerRequestAlternativeByteHandlerClientData, c);
-	}
+        // This character is part of a RTSP request or command, which is handled separately:
+        if (fServerRequestAlternativeByteHandler != NULL && c != 0xFF && c != 0xFE) {
+          // Hack: 0xFF and 0xFE are used as special signaling characters, so don't send them
+          (*fServerRequestAlternativeByteHandler)(fServerRequestAlternativeByteHandlerClientData, c);
+        }
       }
       break;
     }
     case AWAITING_STREAM_CHANNEL_ID: {
       // The byte that we read is the stream channel id.
       if (lookupRTPInterface(c) != NULL) { // sanity check
-	fStreamChannelId = c;
-	fTCPReadingState = AWAITING_SIZE1;
-      } else {
-	// This wasn't a stream channel id that we expected.  We're (somehow) in a strange state.  Try to recover:
+        fStreamChannelId = c;
+        fTCPReadingState = AWAITING_SIZE1;
+      }
+      else {
+	      // This wasn't a stream channel id that we expected.  We're (somehow) in a strange state.  Try to recover:
 #ifdef DEBUG_RECEIVE
-	fprintf(stderr, "SocketDescriptor(socket %d)::tcpReadHandler(): Saw nonexistent stream channel id: 0x%02x\n", fOurSocketNum, c);
+        fprintf(stderr, "SocketDescriptor(socket %d)::tcpReadHandler(): Saw nonexistent stream channel id: 0x%02x\n", fOurSocketNum, c);
 #endif
-	fTCPReadingState = AWAITING_DOLLAR;
+        fTCPReadingState = AWAITING_DOLLAR;
       }
       break;
     }
@@ -570,9 +571,9 @@ Boolean SocketDescriptor::tcpReadHandler1(int mask) {
       // Record the information about the packet data that will be read next:
       RTPInterface* rtpInterface = lookupRTPInterface(fStreamChannelId);
       if (rtpInterface != NULL) {
-	rtpInterface->fNextTCPReadSize = size;
-	rtpInterface->fNextTCPReadStreamSocketNum = fOurSocketNum;
-	rtpInterface->fNextTCPReadStreamChannelId = fStreamChannelId;
+        rtpInterface->fNextTCPReadSize = size;
+        rtpInterface->fNextTCPReadStreamSocketNum = fOurSocketNum;
+        rtpInterface->fNextTCPReadStreamChannelId = fStreamChannelId;
       }
       fTCPReadingState = AWAITING_PACKET_DATA;
       break;

@@ -14,21 +14,21 @@ add_definitions(-DNO_GETIFADDRS)
 endif()
 
 file(GLOB BasicUsageEnvironmentFiles
-	BasicUsageEnvironment/*.cpp)
+	BasicUsageEnvironment/*.cpp BasicUsageEnvironment/include/*.hh)
 add_library(BasicUsageEnvironment
 			${BasicUsageEnvironmentFiles})
 			
 file(GLOB groupsockfiles
-	groupsock/*.cpp groupsock/*.c)
+	groupsock/*.cpp groupsock/*.c groupsock/include/*.hh)
 add_library(groupsock ${groupsockfiles})
 
 file(GLOB liveMediaFiles
-		liveMedia/*.hh liveMedia/*.cpp liveMedia/*.c)	
+		liveMedia/*.hh liveMedia/include/*.hh liveMedia/*.cpp liveMedia/*.c)	
 add_library(liveMedia ${liveMediaFiles})
 target_link_libraries(liveMedia OpenSSL::SSL)
 
 file(GLOB UsageEnvironmentFiles 
-    UsageEnvironment/*.cpp)
+    UsageEnvironment/*.cpp UsageEnvironment/include/*.hh)
 add_library(UsageEnvironment ${UsageEnvironmentFiles})
 
 file(GLOB mediaServerFiles
