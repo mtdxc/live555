@@ -128,8 +128,7 @@ void FileSink::afterGettingFrame(unsigned frameSize,
 				 unsigned numTruncatedBytes,
 				 struct timeval presentationTime) {
   if (numTruncatedBytes > 0) {
-    envir() << "FileSink::afterGettingFrame(): The input frame data was too large for our buffer size ("
-	    << fBufferSize << ").  "
+    envir() << "FileSink::afterGettingFrame(): The input frame data was too large for our buffer size (" << fBufferSize << ").  "
             << numTruncatedBytes << " bytes of trailing data was dropped!  Correct this by increasing the \"bufferSize\" parameter in the \"createNew()\" call to at least "
             << fBufferSize + numTruncatedBytes << "\n";
   }

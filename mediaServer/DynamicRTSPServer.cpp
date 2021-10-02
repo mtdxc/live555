@@ -46,29 +46,26 @@ DynamicRTSPServer::~DynamicRTSPServer() {
 static ServerMediaSession* createNewSMS(UsageEnvironment& env,
 					char const* fileName, FILE* fid); // forward
 
-void DynamicRTSPServer
-::lookupServerMediaSession(char const* streamName,
+void DynamicRTSPServer::lookupServerMediaSession(char const* streamName,
 			   lookupServerMediaSessionCompletionFunc* completionFunc,
 			   void* completionClientData,
 			   Boolean isFirstLookupInSession) {
   // First, check whether the specified "streamName" exists as a local file:
   FILE* fid = fopen(streamName, "rb");
-  Boolean const fileExists = fid != NULL;
 
   // Next, check whether we already have a "ServerMediaSession" for this file:
   ServerMediaSession* sms = getServerMediaSession(streamName);
-  Boolean const smsExists = sms != NULL;
 
   // Handle the four possibilities for "fileExists" and "smsExists":
-  if (!fileExists) {
-    if (smsExists) {
+  if (fid == NULL) {
+    if (sms) {
       // "sms" was created for a file that no longer exists. Remove it:
       removeServerMediaSession(sms);
     }
 
     sms = NULL;
   } else {
-    if (smsExists && isFirstLookupInSession) { 
+    if (sms && isFirstLookupInSession) { 
       // Remove the existing "ServerMediaSession" and create a new one, in case the underlying
       // file has changed in some way:
       removeServerMediaSession(sms); 

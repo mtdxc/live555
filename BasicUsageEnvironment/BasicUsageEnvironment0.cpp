@@ -57,9 +57,9 @@ void BasicUsageEnvironment0::setResultMsg(MsgString msg1, MsgString msg2) {
   appendToResultMsg(msg2);
 }
 
-void BasicUsageEnvironment0::setResultMsg(MsgString msg1, MsgString msg2,
-				       MsgString msg3) {
-  setResultMsg(msg1, msg2);
+void BasicUsageEnvironment0::setResultMsg(MsgString msg1, MsgString msg2, MsgString msg3) {
+  setResultMsg(msg1);
+  appendToResultMsg(msg2);
   appendToResultMsg(msg3);
 }
 
@@ -83,8 +83,6 @@ void BasicUsageEnvironment0::setResultErrMsg(MsgString msg, int err) {
   appendToResultMsg(strerror(err));
 #endif
 }
-
-
 
 
 void BasicUsageEnvironment0::appendToResultMsg(MsgString msg) {

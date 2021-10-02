@@ -2090,9 +2090,9 @@ void RTSPClient::RequestQueue::reset() {
 #ifndef OMIT_REGISTER_HANDLING
 ////////// HandlerServerForREGISTERCommand implementation /////////
 
-HandlerServerForREGISTERCommand* HandlerServerForREGISTERCommand
-::createNew(UsageEnvironment& env, onRTSPClientCreationFunc* creationFunc, Port ourPort,
-	    UserAuthenticationDatabase* authDatabase, int verbosityLevel, char const* applicationName) {
+HandlerServerForREGISTERCommand* HandlerServerForREGISTERCommand::createNew(
+  UsageEnvironment& env, onRTSPClientCreationFunc* creationFunc, Port ourPort,
+  UserAuthenticationDatabase* authDatabase, int verbosityLevel, char const* applicationName) {
   int ourSocketIPv4 = setUpOurSocket(env, ourPort, AF_INET);
   int ourSocketIPv6 = setUpOurSocket(env, ourPort, AF_INET6);
   if (ourSocketIPv4 < 0 && ourSocketIPv6 < 0) return NULL;
@@ -2100,9 +2100,9 @@ HandlerServerForREGISTERCommand* HandlerServerForREGISTERCommand
   return new HandlerServerForREGISTERCommand(env, creationFunc, ourSocketIPv4, ourSocketIPv6, ourPort, authDatabase, verbosityLevel, applicationName);
 }
 
-HandlerServerForREGISTERCommand
-::HandlerServerForREGISTERCommand(UsageEnvironment& env, onRTSPClientCreationFunc* creationFunc, int ourSocketIPv4, int ourSocketIPv6, Port ourPort,
-                                  UserAuthenticationDatabase* authDatabase, int verbosityLevel, char const* applicationName)
+HandlerServerForREGISTERCommand::HandlerServerForREGISTERCommand(
+  UsageEnvironment& env, onRTSPClientCreationFunc* creationFunc, int ourSocketIPv4, int ourSocketIPv6, Port ourPort,
+  UserAuthenticationDatabase* authDatabase, int verbosityLevel, char const* applicationName)
   : RTSPServer(env, ourSocketIPv4, ourSocketIPv6, ourPort, authDatabase, 30/*small reclamationTestSeconds*/),
     fCreationFunc(creationFunc), fVerbosityLevel(verbosityLevel), fApplicationName(strDup(applicationName)) {
 }
@@ -2111,8 +2111,8 @@ HandlerServerForREGISTERCommand::~HandlerServerForREGISTERCommand() {
   delete[] fApplicationName;
 }
 
-RTSPClient* HandlerServerForREGISTERCommand
-::createNewRTSPClient(char const* rtspURL, int verbosityLevel, char const* applicationName, int socketNumToServer) {
+RTSPClient* HandlerServerForREGISTERCommand::createNewRTSPClient(
+  char const* rtspURL, int verbosityLevel, char const* applicationName, int socketNumToServer) {
   // Default implementation: create a basic "RTSPClient":
   return RTSPClient::createNew(envir(), rtspURL, verbosityLevel, applicationName, 0, socketNumToServer);
 }
@@ -2121,18 +2121,19 @@ char const* HandlerServerForREGISTERCommand::allowedCommandNames() {
   return "OPTIONS, REGISTER";
 }
 
-Boolean HandlerServerForREGISTERCommand
-::weImplementREGISTER(char const* cmd/*"REGISTER" or "DEREGISTER"*/,
-		      char const* /*proxyURLSuffix*/, char*& responseStr) {
+Boolean HandlerServerForREGISTERCommand::weImplementREGISTER(
+  char const* cmd/*"REGISTER" or "DEREGISTER"*/,
+  char const* /*proxyURLSuffix*/, 
+  char*& responseStr) {
   responseStr = NULL;
   // By default, we implement only "REGISTER"; not "DEREGISTER".  Subclass to implement "DEREGISTER"
   return strcmp(cmd, "REGISTER") == 0;
 }
 
-void HandlerServerForREGISTERCommand
-::implementCmd_REGISTER(char const* cmd/*"REGISTER" or "DEREGISTER"*/,
-			char const* url, char const* urlSuffix, int socketToRemoteServer,
-			Boolean deliverViaTCP, char const* /*proxyURLSuffix*/) {
+void HandlerServerForREGISTERCommand::implementCmd_REGISTER(
+  char const* cmd/*"REGISTER" or "DEREGISTER"*/,
+  char const* url, char const* urlSuffix, int socketToRemoteServer,
+  Boolean deliverViaTCP, char const* /*proxyURLSuffix*/) {
   if (strcmp(cmd, "REGISTER") == 0) { // By default, we don't implement "DEREGISTER"
     // Create a new "RTSPClient" object, and call our 'creation function' with it:
     RTSPClient* newRTSPClient = createNewRTSPClient(url, fVerbosityLevel, fApplicationName, socketToRemoteServer);
