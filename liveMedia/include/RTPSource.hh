@@ -76,17 +76,15 @@ public:
     fRTPInterface.setStreamSocket(sockNum, streamChannelId);
   }
 
-  void setAuxilliaryReadHandler(AuxHandlerFunc* handlerFunc,
-                                void* handlerClientData) {
-    fRTPInterface.setAuxilliaryReadHandler(handlerFunc,
-					   handlerClientData);
+  void setAuxilliaryReadHandler(AuxHandlerFunc* handlerFunc, void* handlerClientData) {
+    fRTPInterface.setAuxilliaryReadHandler(handlerFunc, handlerClientData);
   }
 
   // Note that RTP receivers will usually not need to call either of the following two functions, because
   // RTP sequence numbers and timestamps are usually not useful to receivers.
   // (Our implementation of RTP reception already does all needed handling of RTP sequence numbers and timestamps.)
   u_int16_t curPacketRTPSeqNum() const { return fCurPacketRTPSeqNum; }
-private: friend class MediaSubsession; // "MediaSubsession" is the only outside class that ever needs to see RTP timestamps!
+//private: friend class MediaSubsession; // "MediaSubsession" is the only outside class that ever needs to see RTP timestamps!
   u_int32_t curPacketRTPTimestamp() const { return fCurPacketRTPTimestamp; }
 
 protected:

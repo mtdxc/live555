@@ -47,11 +47,10 @@ void H264or5VideoFileSink::afterGettingFrame(unsigned frameSize, unsigned numTru
     // If we have NAL units encoded in "sprop parameter strings", prepend these to the file:
     for (unsigned j = 0; j < 3; ++j) {
       unsigned numSPropRecords;
-      SPropRecord* sPropRecords
-	= parseSPropParameterSets(fSPropParameterSetsStr[j], numSPropRecords);
+      SPropRecord* sPropRecords = parseSPropParameterSets(fSPropParameterSetsStr[j], numSPropRecords);
       for (unsigned i = 0; i < numSPropRecords; ++i) {
-	if (sPropRecords[i].sPropLength > 0) addData(start_code, 4, presentationTime);
-	addData(sPropRecords[i].sPropBytes, sPropRecords[i].sPropLength, presentationTime);
+        if (sPropRecords[i].sPropLength > 0) addData(start_code, 4, presentationTime);
+        addData(sPropRecords[i].sPropBytes, sPropRecords[i].sPropLength, presentationTime);
       }
       delete[] sPropRecords;
     }

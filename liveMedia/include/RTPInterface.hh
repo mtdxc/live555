@@ -55,8 +55,8 @@ public:
   static void clearServerRequestAlternativeByteHandler(UsageEnvironment& env, int socketNum);
 
   Boolean sendPacket(unsigned char* packet, unsigned packetSize);
-  void startNetworkReading(TaskScheduler::BackgroundHandlerProc*
-                           handlerProc);
+
+  void startNetworkReading(TaskScheduler::BackgroundHandlerProc* handlerProc);
   Boolean handleRead(unsigned char* buffer, unsigned bufferMaxSize,
 		     // out parameters:
 		     unsigned& bytesRead, struct sockaddr_storage& fromAddress,
@@ -64,8 +64,6 @@ public:
 		     Boolean& packetReadWasIncomplete);
   // Note: If "tcpSocketNum" < 0, then the packet was received over UDP, and "tcpStreamChannelId"
   //   is undefined (and irrelevant).
-
-
   // Otherwise (if "tcpSocketNum" >= 0), the packet was received (interleaved) over TCP, and
   //   "tcpStreamChannelId" will return the channel id.
 
@@ -85,6 +83,14 @@ public:
     // is also being read from elsewhere.)
 
 private:
+  /* rtp/rtsp over tcp header:
+    typedef struct rtsp_interleaved
+    {
+        unsigned int magic : 8;// $
+        unsigned int channel : 8; //0-1
+        unsigned int rtp_len : 16;
+    }RILF;
+  */
   // Helper functions for sending a RTP or RTCP packet over a TCP connection:
   Boolean sendRTPorRTCPPacketOverTCP(unsigned char* packet, unsigned packetSize,
 				     int socketNum, unsigned char streamChannelId);

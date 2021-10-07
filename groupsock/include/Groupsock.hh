@@ -61,8 +61,8 @@ private:
 
 class destRecord {
 public:
-  destRecord(struct sockaddr_storage const& addr, Port const& port, u_int8_t ttl, unsigned sessionId,
-	     destRecord* next);
+  destRecord(struct sockaddr_storage const& addr, Port const& port, u_int8_t ttl, 
+    unsigned sessionId, destRecord* next);
   virtual ~destRecord();
 
 public:
@@ -105,8 +105,7 @@ public:
 
   // As a special case, we also allow multiple destinations (addresses & ports)
   // (This can be used to implement multi-unicast.)
-  virtual void addDestination(struct sockaddr_storage const& addr, Port const& port,
-			      unsigned sessionId);
+  virtual void addDestination(struct sockaddr_storage const& addr, Port const& port, unsigned sessionId);
   virtual void removeDestination(unsigned sessionId);
   void removeAllDestinations();
   Boolean hasMultipleDestinations() const { return fDests != NULL && fDests->fNext != NULL; }

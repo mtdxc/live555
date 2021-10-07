@@ -41,7 +41,6 @@ public:
   virtual ~BasicHashTable();
 
   // Used to iterate through the members of the table:
-  class Iterator; friend class Iterator; // to make Sun's C++ compiler happy
   class Iterator: public HashTable::Iterator {
   public:
     Iterator(BasicHashTable const& table);
@@ -54,6 +53,7 @@ public:
     unsigned fNextIndex; // index of next bucket to be enumerated after this
     TableEntry* fNextEntry; // next entry in the current bucket
   };
+  friend class Iterator; // to make Sun's C++ compiler happy
 
 private: // implementation of inherited pure virtual functions
   virtual void* Add(char const* key, void* value);

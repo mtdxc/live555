@@ -55,9 +55,7 @@ Boolean OutputSocket::write(struct sockaddr_storage const& addressAndPort, u_int
     // kernel chose as our ephemeral source port number:
     if (!getSourcePort(env(), socketNum(), addressAndPort.ss_family, fSourcePort)) {
       if (DebugLevel >= 1)
-	env() << *this
-	     << ": failed to get source port: "
-	     << env().getResultMsg() << "\n";
+	      env() << *this << ": failed to get source port: " << env().getResultMsg() << "\n";
       return False;
     }
   }
@@ -66,8 +64,7 @@ Boolean OutputSocket::write(struct sockaddr_storage const& addressAndPort, u_int
 }
 
 // By default, we don't do reads:
-Boolean OutputSocket
-::handleRead(unsigned char* /*buffer*/, unsigned /*bufferMaxSize*/,
+Boolean OutputSocket::handleRead(unsigned char* /*buffer*/, unsigned /*bufferMaxSize*/,
 	     unsigned& /*bytesRead*/, struct sockaddr_storage& /*fromAddressAndPort*/) {
   return True;
 }
@@ -75,9 +72,8 @@ Boolean OutputSocket
 
 ///////// destRecord //////////
 
-destRecord
-::destRecord(struct sockaddr_storage const& addr, Port const& port, u_int8_t ttl, unsigned sessionId,
-	     destRecord* next)
+destRecord::destRecord(
+  struct sockaddr_storage const& addr, Port const& port, u_int8_t ttl, unsigned sessionId, destRecord* next)
   : fNext(next), fGroupEId(addr, port.num(), ttl), fSessionId(sessionId) {
 }
 
@@ -92,23 +88,20 @@ NetInterfaceTrafficStats Groupsock::statsIncoming;
 NetInterfaceTrafficStats Groupsock::statsOutgoing;
 
 // Constructor for a source-independent multicast group
-Groupsock::Groupsock(UsageEnvironment& env, struct sockaddr_storage const& groupAddr,
-		     Port port, u_int8_t ttl)
+Groupsock::Groupsock(UsageEnvironment& env, struct sockaddr_storage const& groupAddr, Port port, u_int8_t ttl)
   : OutputSocket(env, port, groupAddr.ss_family),
     fDests(new destRecord(groupAddr, port, ttl, 0, NULL)),
     fIncomingGroupEId(groupAddr, port.num(), ttl) {
   if (!socketJoinGroup(env, socketNum(), groupAddr)) {
     if (DebugLevel >= 1) {
-      env << *this << ": failed to join group: "
-	  << env.getResultMsg() << "\n";
+      env << *this << ": failed to join group: " << env.getResultMsg() << "\n";
     }
   }
 
   // Make sure we can get our source address:
   if (!weHaveAnIPAddress(env)) {
     if (DebugLevel >= 0) { // this is a fatal error
-      env << "Unable to determine our source address: "
-	  << env.getResultMsg() << "\n";
+      env << "Unable to determine our source address: " << env.getResultMsg() << "\n";
     }
   }
 
@@ -117,22 +110,19 @@ Groupsock::Groupsock(UsageEnvironment& env, struct sockaddr_storage const& group
 
 // Constructor for a source-specific multicast group
 Groupsock::Groupsock(UsageEnvironment& env, struct sockaddr_storage const& groupAddr,
-		     struct sockaddr_storage const& sourceFilterAddr,
-		     Port port)
+		     struct sockaddr_storage const& sourceFilterAddr, Port port)
   : OutputSocket(env, port, groupAddr.ss_family),
     fDests(new destRecord(groupAddr, port, 255, 0, NULL)),
     fIncomingGroupEId(groupAddr, sourceFilterAddr, port.num()) {
   // First try a SSM join.  If that fails, try a regular join:
   if (!socketJoinGroupSSM(env, socketNum(), groupAddr, sourceFilterAddr)) {
     if (DebugLevel >= 3) {
-      env << *this << ": SSM join failed: "
-	  << env.getResultMsg();
+      env << *this << ": SSM join failed: " << env.getResultMsg();
       env << " - trying regular join instead\n";
     }
     if (!socketJoinGroup(env, socketNum(), groupAddr)) {
       if (DebugLevel >= 1) {
-	env << *this << ": failed to join group: "
-	     << env.getResultMsg() << "\n";
+        env << *this << ": failed to join group: " << env.getResultMsg() << "\n";
       }
     }
   }
@@ -154,9 +144,8 @@ Groupsock::~Groupsock() {
   if (DebugLevel >= 2) env() << *this << ": deleting\n";
 }
 
-destRecord* Groupsock
-::createNewDestRecord(struct sockaddr_storage const& addr, Port const& port, u_int8_t ttl,
-		      unsigned sessionId, destRecord* next) {
+destRecord* Groupsock::createNewDestRecord(
+  struct sockaddr_storage const& addr, Port const& port, u_int8_t ttl, unsigned sessionId, destRecord* next) {
   // Default implementation:
   return new destRecord(addr, port, ttl, sessionId, next);
 }

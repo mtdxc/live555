@@ -93,7 +93,7 @@ SocketLookupTable::~SocketLookupTable() {
 Socket* SocketLookupTable::Fetch(UsageEnvironment& env, Port port,
 				 Boolean& isNew) {
   isNew = False;
-  Socket* sock;
+  Socket* sock = NULL;
   do {
     sock = (Socket*) fTable->Lookup((char*)(long)(port.num()));
     if (sock == NULL) { // we need to create one:

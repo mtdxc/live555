@@ -110,8 +110,7 @@ static void onOggDemuxCreation(OggFileServerDemux* newDemux, void* clientData) {
 // END Special code for handling Ogg files:
 
 #define NEW_SMS(description) do {\
-char const* descStr = description\
-    ", streamed by the LIVE555 Media Server";\
+char const* descStr = description ", streamed by the LIVE555 Media Server";\
 sms = ServerMediaSession::createNew(env, fileName, fileName, descStr);\
 } while(0)
 
@@ -164,8 +163,7 @@ static ServerMediaSession* createNewSMS(UsageEnvironment& env,
     useADUs = True;
 #ifdef INTERLEAVE_ADUS
     unsigned char interleaveCycle[] = {0,2,1,3}; // or choose your own...
-    unsigned const interleaveCycleSize
-      = (sizeof interleaveCycle)/(sizeof (unsigned char));
+    unsigned const interleaveCycleSize = (sizeof interleaveCycle)/(sizeof (unsigned char));
     interleaving = new Interleaving(interleaveCycleSize, interleaveCycle);
 #endif
 #endif

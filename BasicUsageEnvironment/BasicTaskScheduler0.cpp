@@ -118,8 +118,8 @@ void BasicTaskScheduler0::deleteEventTrigger(EventTriggerId eventTriggerId) {
     EventTriggerId mask = 0x80000000;
     for (unsigned i = 0; i < MAX_NUM_EVENT_TRIGGERS; ++i) {
       if ((eventTriggerId&mask) != 0) {
-	fTriggeredEventHandlers[i] = NULL;
-	fTriggeredEventClientDatas[i] = NULL;
+        fTriggeredEventHandlers[i] = NULL;
+        fTriggeredEventClientDatas[i] = NULL;
       }
       mask >>= 1;
     }
@@ -176,8 +176,9 @@ HandlerSet::~HandlerSet() {
   }
 }
 
-void HandlerSet
-::assignHandler(int socketNum, int conditionSet, TaskScheduler::BackgroundHandlerProc* handlerProc, void* clientData) {
+void HandlerSet::assignHandler(
+  int socketNum, int conditionSet, TaskScheduler::BackgroundHandlerProc* handlerProc, void* clientData) 
+{
   // First, see if there's already a handler for this socket:
   HandlerDescriptor* handler = lookupHandler(socketNum);
   if (handler == NULL) { // No existing handler, so create a new descr:

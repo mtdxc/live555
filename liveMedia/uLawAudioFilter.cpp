@@ -32,9 +32,8 @@ uLawFromPCMAudioSource* uLawFromPCMAudioSource
   return new uLawFromPCMAudioSource(env, inputSource, byteOrdering);
 }
 
-uLawFromPCMAudioSource
-::uLawFromPCMAudioSource(UsageEnvironment& env, FramedSource* inputSource,
-			 int byteOrdering)
+uLawFromPCMAudioSource::uLawFromPCMAudioSource(
+  UsageEnvironment& env, FramedSource* inputSource, int byteOrdering)
   : FramedFilter(env, inputSource),
     fByteOrdering(byteOrdering), fInputBuffer(NULL), fInputBufferSize(0) {
 }
@@ -48,13 +47,14 @@ void uLawFromPCMAudioSource::doGetNextFrame() {
   // our input buffer if necessary:
   unsigned bytesToRead = fMaxSize*2; // because we're converting 16 bits->8
   if (bytesToRead > fInputBufferSize) {
-    delete[] fInputBuffer; fInputBuffer = new unsigned char[bytesToRead];
+    delete[] fInputBuffer; 
+    fInputBuffer = new unsigned char[bytesToRead];
     fInputBufferSize = bytesToRead;
   }
 
   // Arrange to read samples into the input buffer:
   fInputSource->getNextFrame(fInputBuffer, bytesToRead,
-			     afterGettingFrame, this,
+                             afterGettingFrame, this,
                              FramedSource::handleClosure, this);
 }
 

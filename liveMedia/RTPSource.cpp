@@ -279,8 +279,7 @@ void RTPReceptionStats
   // Record the inter-packet delay
   struct timeval timeNow;
   gettimeofday(&timeNow, NULL);
-  if (fLastPacketReceptionTime.tv_sec != 0
-      || fLastPacketReceptionTime.tv_usec != 0) {
+  if (fLastPacketReceptionTime.tv_sec != 0 || fLastPacketReceptionTime.tv_usec != 0) {
     unsigned gap
       = (timeNow.tv_sec - fLastPacketReceptionTime.tv_sec)*MILLION
       + timeNow.tv_usec - fLastPacketReceptionTime.tv_usec; 
@@ -307,8 +306,7 @@ void RTPReceptionStats
   if (useForJitterCalculation
       && rtpTimestamp != fPreviousPacketRTPTimestamp) {
     unsigned arrival = (timestampFrequency*timeNow.tv_sec);
-    arrival += (unsigned)
-      ((2.0*timestampFrequency*timeNow.tv_usec + 1000000.0)/2000000);
+    arrival += (unsigned) ((2.0*timestampFrequency*timeNow.tv_usec + 1000000.0)/2000000);
             // note: rounding
     int transit = arrival - rtpTimestamp;
     if (fLastTransit == (~0)) fLastTransit = transit; // hack for first time

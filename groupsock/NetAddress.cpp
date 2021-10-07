@@ -92,7 +92,7 @@ struct sockaddr_storage const& nullAddress(int addressFamily) {
     default: { // assume AF_INET6
       _nullIPv6Address.ss_family = AF_INET6;
       for (unsigned i = 0; i < 16; ++i) {
-	((sockaddr_in6&)_nullIPv6Address).sin6_addr.s6_addr[i] = 0;
+        ((sockaddr_in6&)_nullIPv6Address).sin6_addr.s6_addr[i] = 0;
       }
 
       return _nullIPv6Address;
@@ -107,7 +107,7 @@ Boolean addressIsNull(sockaddr_storage const& address) {
     }
     case AF_INET6: {
       for (unsigned i = 0; i < 16; ++i) {
-	if (((sockaddr_in6 const&)address).sin6_addr.s6_addr[i] != 0) return False;
+        if (((sockaddr_in6 const&)address).sin6_addr.s6_addr[i] != 0) return False;
       }
       return True;
     }
@@ -202,7 +202,6 @@ NetAddressList::NetAddressList(char const* hostname, int addressFamily)
   struct hostent* host;
 #if defined(VXWORKS)
   char hostentBuf[512];
-
   host = (struct hostent*)resolvGetHostByName((char*)hostname, (char*)&hostentBuf, sizeof hostentBuf);
 #else
   host = gethostbyname((char*)hostname);

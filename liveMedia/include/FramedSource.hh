@@ -38,25 +38,23 @@ public:
 				  struct timeval presentationTime,
 				  unsigned durationInMicroseconds);
   typedef void (onCloseFunc)(void* clientData);
+
   void getNextFrame(unsigned char* to, unsigned maxSize,
 		    afterGettingFunc* afterGettingFunc,
 		    void* afterGettingClientData,
 		    onCloseFunc* onCloseFunc,
 		    void* onCloseClientData);
+  virtual void doGetNextFrame() = 0;
+  // called by getNextFrame()
 
   static void handleClosure(void* clientData);
   void handleClosure();
       // This should be called (on ourself) if the source is discovered
       // to be closed (i.e., no longer readable)
 
-  void stopGettingFrames();
-
   virtual unsigned maxFrameSize() const;
       // size of the largest possible frame that we may serve, or 0
       // if no such maximum is known (default)
-
-  virtual void doGetNextFrame() = 0;
-      // called by getNextFrame()
 
   Boolean isCurrentlyAwaitingData() const {return fIsCurrentlyAwaitingData;}
 
@@ -64,11 +62,12 @@ public:
       // doGetNextFrame() should arrange for this to be called after the
       // frame has been read (*iff* it is read successfully)
 
+  void stopGettingFrames();
 protected:
+  virtual void doStopGettingFrames();
+
   FramedSource(UsageEnvironment& env); // abstract base class
   virtual ~FramedSource();
-
-  virtual void doStopGettingFrames();
 
 protected:
   // The following variables are typically accessed/set by doGetNextFrame()

@@ -120,12 +120,12 @@ SPropRecord* parseSPropParameterSets(char const* sPropParameterSetsStr,
                                      // result parameter:
                                      unsigned& numSPropRecords) {
   // Make a copy of the input string, so we can replace the commas with '\0's:
-  char* inStr = strDup(sPropParameterSetsStr);
-  if (inStr == NULL) {
+  if (sPropParameterSetsStr == NULL) {
     numSPropRecords = 0;
     return NULL;
   }
 
+  char *inStr = strDup(sPropParameterSetsStr);
   // Count the number of commas (and thus the number of parameter sets):
   numSPropRecords = 1;
   char* s;

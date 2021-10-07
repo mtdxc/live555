@@ -24,9 +24,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #include "DeviceSource.hh"
 #include <GroupsockHelper.hh> // for "gettimeofday()"
 
-DeviceSource*
-DeviceSource::createNew(UsageEnvironment& env,
-			DeviceParameters params) {
+DeviceSource* DeviceSource::createNew(UsageEnvironment& env, DeviceParameters params) {
   return new DeviceSource(env, params);
 }
 
@@ -34,8 +32,7 @@ EventTriggerId DeviceSource::eventTriggerId = 0;
 
 unsigned DeviceSource::referenceCount = 0;
 
-DeviceSource::DeviceSource(UsageEnvironment& env,
-			   DeviceParameters params)
+DeviceSource::DeviceSource(UsageEnvironment& env, DeviceParameters params)
   : FramedSource(env), fParams(params) {
   if (referenceCount == 0) {
     // Any global initialization of the device would be done here:

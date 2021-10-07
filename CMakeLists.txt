@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 2.9)
 
 project(live555)
 find_package(OpenSSL REQUIRED)
@@ -58,7 +58,7 @@ target_link_libraries(hlsProxy
 			UsageEnvironment liveMedia)
 
 
-add_executable(openRTSP testProgs/playCommon.cpp testProgs/openRTSP.cpp)
+add_executable(openRTSP testProgs/playCommon.hh testProgs/playCommon.cpp testProgs/openRTSP.cpp)
 if(MSVC)
 	target_link_libraries(openRTSP ws2_32.lib)
 endif()
@@ -66,7 +66,7 @@ target_link_libraries(openRTSP
 			BasicUsageEnvironment groupsock
 			UsageEnvironment liveMedia)
 
-add_executable(playSIP testProgs/playCommon.cpp testProgs/playSIP.cpp)
+add_executable(playSIP testProgs/playCommon.hh testProgs/playCommon.cpp testProgs/playSIP.cpp)
 if(MSVC)
 	target_link_libraries(playSIP ws2_32.lib)
 endif()

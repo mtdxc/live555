@@ -74,14 +74,19 @@ public:
   ~OutPacketBuffer();
 
   static unsigned maxSize;
-  static void increaseMaxSizeTo(unsigned newMaxSize) { if (newMaxSize > OutPacketBuffer::maxSize) OutPacketBuffer::maxSize = newMaxSize; }
-
+  static void increaseMaxSizeTo(unsigned newMaxSize) { 
+    if (newMaxSize > OutPacketBuffer::maxSize) 
+      OutPacketBuffer::maxSize = newMaxSize; 
+  }
+  // write/append ptr
   unsigned char* curPtr() const {return &fBuf[fPacketStart + fCurOffset];}
   unsigned totalBytesAvailable() const {
     return fLimit - (fPacketStart + fCurOffset);
   }
   unsigned totalBufferSize() const { return fLimit; }
+  // read ptr
   unsigned char* packet() const {return &fBuf[fPacketStart];}
+  // read/packet size
   unsigned curPacketSize() const {return fCurOffset;}
 
   void increment(unsigned numBytes) {fCurOffset += numBytes;}
